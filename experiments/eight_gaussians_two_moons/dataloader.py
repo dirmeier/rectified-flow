@@ -23,8 +23,13 @@ def get_data_loaders(
                 yield self()
 
         def __call__(self, batch_size=256):
-            *batch_keys, self.rng_key = jr.split(self.rng_key, len(data_fns) + 1)
-            batch = [data_fn(batch_key, batch_size) for batch_key, data_fn in zip(batch_keys, data_fns)]
+            *batch_keys, self.rng_key = jr.split(
+                self.rng_key, len(data_fns) + 1
+            )
+            batch = [
+                data_fn(batch_key, batch_size)
+                for batch_key, data_fn in zip(batch_keys, data_fns)
+            ]
             return batch
 
     return _DataLoader(rng_key)

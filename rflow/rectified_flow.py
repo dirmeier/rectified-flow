@@ -19,7 +19,10 @@ class RectifiedFlow(nn.Module):
         rng_key = self.make_rng("sample")
         time_key, rng_key = jr.split(rng_key)
         times = jr.uniform(time_key, (y0.shape[0],), minval=1e-3)
-        inputs = times.reshape((y1.shape[0], 1)) * y1 + (1.0 - times.reshape((y0.shape[0], 1))) * y0
+        inputs = (
+            times.reshape((y1.shape[0], 1)) * y1
+            + (1.0 - times.reshape((y0.shape[0], 1))) * y0
+        )
         ret = self.score_model(inputs, times, is_training=is_training)
         target = y1 - y0
         loss = jnp.sum(jnp.square(target - ret), axis=range(1, y0.ndim))
@@ -33,7 +36,12 @@ class RectifiedFlow(nn.Module):
             return ret.reshape(-1)
 
         ret = integrate.solve_ivp(
-            ode_func, (1.0, eps), np.asarray(inputs).reshape(-1), rtol=1e-5, atol=1e-5, method="RK45"
+            ode_func,
+            (1.0, eps),
+            np.asarray(inputs).reshape(-1),
+            rtol=1e-5,
+            atol=1e-5,
+            method="RK45",
         )
 
         ret = ret.y[:, -1].reshape(inputs.shape)

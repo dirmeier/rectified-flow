@@ -52,7 +52,10 @@ def train(rng_key, data_loader):
 
 def _sample(sample_key, state, batch):
     return state.apply_fn(
-        variables={"params": state.params}, rngs={"sample": sample_key}, method="sample", inputs=batch[0]
+        variables={"params": state.params},
+        rngs={"sample": sample_key},
+        method="sample",
+        inputs=batch[0],
     )
 
 
@@ -60,8 +63,12 @@ def sample(sample_key, step, batch, state):
     samples = _sample(sample_key, state, batch)
     samples = np.array(samples)
     fig, ax = plt.subplots(figsize=(6, 4))
-    ax.scatter(batch[0][:, 0], batch[0][:, 1], marker=".", color="black", alpha=0.5)
-    ax.scatter(samples[:, 0], samples[:, 1], marker=".", color="blue", alpha=0.5)
+    ax.scatter(
+        batch[0][:, 0], batch[0][:, 1], marker=".", color="black", alpha=0.5
+    )
+    ax.scatter(
+        samples[:, 0], samples[:, 1], marker=".", color="blue", alpha=0.5
+    )
     ax.spines[["right", "top", "left", "bottom"]].set_visible(False)
     ax.grid(True)
     ax.set_title(f"{step} training steps")
